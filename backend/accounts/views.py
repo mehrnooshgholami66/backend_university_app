@@ -37,7 +37,7 @@ class CreateUserApiView(APIView):
 
 class ProfessorListAPIView(ListAPIView):
     serializer_class = ProfessorSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return User.objects.filter(

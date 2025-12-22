@@ -9,6 +9,10 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Document
 from .serializers import DocumentSerializer
 from rest_framework import status
+from django.contrib.auth import get_user_model
+from rest_framework import status
+
+User = get_user_model()
 
 class DocumentByProfessorAPIView(ListAPIView):
     serializer_class = DocumentSerializer
@@ -24,30 +28,32 @@ class DocumentByProfessorAPIView(ListAPIView):
 class DocumentUploadAPIView(APIView):
     """
     Upload document/article by professor
-    Auth فعلاً نداریم
     """
 
     def post(self, request):
-        serializer = DocumentSerializer(
-            data=request.data
-        )
+        professor_id = request.data.get("professor")
 
-        if not serializer.is_valid():
+        if not professor_id:
             return Response(
-                serializer.errors,
+                {"detail": "professor is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        document = serializer.save()
+        try:
+            professor = User.objects.get(id=professor_id)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "Professor not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = DocumentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        document = serializer.save(professor=professor)
 
         return Response(
-            {
-                "id": document.id,
-                "title": document.title,
-                "file": document.file.url,
-                "file_type": document.file_type,
-                "professor_id": document.professor_id,
-                "created_at": document.created_at,
-            },
+            DocumentSerializer(document).data,
             status=status.HTTP_201_CREATED
         )
+    

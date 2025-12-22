@@ -1,16 +1,16 @@
 from rest_framework import serializers
+from rest_framework import serializers
 from .models import Document
 
 class DocumentSerializer(serializers.ModelSerializer):
-    professor = serializers.CharField(source="professor.username")
+    file = serializers.FileField(use_url=True)
 
     class Meta:
         model = Document
         fields = [
             "id",
             "title",
-            "file_type",
-            "professor",
             "file",
-            "created_at"
+            "file_type",
+            "created_at",
         ]
