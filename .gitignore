@@ -137,6 +137,8 @@ env.bak/
 venv.bak/
 backend/static/admin
 backend/static/rest_framework
+backend/media/documents
+backend/media/article
 
 # Spyder project settings
 .spyderproject
