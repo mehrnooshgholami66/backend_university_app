@@ -5,7 +5,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .permissions import IsProfessor
 from .models import Document
 from .serializers import DocumentSerializer
 from rest_framework import status
@@ -16,7 +17,7 @@ User = get_user_model()
 
 class DocumentByProfessorAPIView(ListAPIView):
     serializer_class = DocumentSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         professor_id = self.kwargs["professor_id"]
@@ -26,6 +27,7 @@ class DocumentByProfessorAPIView(ListAPIView):
 
 
 class DocumentUploadAPIView(APIView):
+    permission_classes = [IsProfessor]
     """
     Upload document/article by professor
     """

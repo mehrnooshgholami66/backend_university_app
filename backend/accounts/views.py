@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from accounts.serializers import ProfessorSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
@@ -17,6 +17,7 @@ User = get_user_model()
 
 
 class CreateUserApiView(APIView):
+    permission_classes = [IsAdminUser]
     """
     API برای ساخت یوزر توسط ادمین
     """
@@ -37,7 +38,7 @@ class CreateUserApiView(APIView):
 
 class ProfessorListAPIView(ListAPIView):
     serializer_class = ProfessorSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return User.objects.filter(
@@ -47,6 +48,7 @@ class ProfessorListAPIView(ListAPIView):
 
 
 class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
     """
     Login API → return Token + user info
     """
@@ -87,6 +89,7 @@ class LoginAPIView(APIView):
         })
     
 class BlockUserApiView(APIView):
+    permission_classes = [IsAdminUser]
 
     def post(self, request, username):
         try:
@@ -108,6 +111,7 @@ class BlockUserApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 class UnBlockUserApiView(APIView):
+    permission_classes = [IsAdminUser]
     def post(self, request, username):
         try:
             user = User.objects.get(username=username)
@@ -128,6 +132,7 @@ class UnBlockUserApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 class DeleteUserApiView(APIView):
+    permission_classes = [IsAdminUser]
     def delete(self, request, username):
         try:
             user = User.objects.get(username=username)
