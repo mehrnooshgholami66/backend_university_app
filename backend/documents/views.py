@@ -27,7 +27,7 @@ class DocumentByProfessorAPIView(ListAPIView):
 
 
 class DocumentUploadAPIView(APIView):
-    permission_classes = [IsProfessor]
+    permission_classes = [IsProfessor, IsAuthenticated]
     """
     Upload document/article by professor
     """
